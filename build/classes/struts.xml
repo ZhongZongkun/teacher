@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"/struts-2.3.dtd">
+
+<struts>
+<constant name="struts.i18n.encoding" value="utf-8"></constant>
+<constant name="struts.action.excludePattern" value="/static/.*?" /><!-- 拦截器忽略static目录下的静态文件 -->
+<!-- 前台 -->
+<package name="default" namespace="/" extends="struts-default">
+		<!-- 登录检查Action -->
+    	<action name="loginCheck" class="cn.zzk.action.LoginAction">
+    		<result name="success" type="redirectAction">web/indexAction</result>
+    		<result name="input">/index.jsp</result>
+    	</action>
+    	<!-- 登录检测Action结束 -->
+</package>
+    
+    <!-- 后台 -->
+    <package name="admin" namespace="/web" extends="struts-default">
+    	<!-- 拦截器 -->
+    	<interceptors>
+    	<interceptor name="userLogin" class="cn.zzk.interceptor.UserLoginCheck"></interceptor>
+    	<interceptor-stack name="loginStack">  
+        	<interceptor-ref name="userLogin"></interceptor-ref>  
+        	<interceptor-ref name="defaultStack"></interceptor-ref>  
+        </interceptor-stack> 
+    	</interceptors>
+    	<default-interceptor-ref name="loginStack" /><!--后台默认拦截器栈  -->
+    	<!-- 全局login视图 -->
+    	<global-results>
+    		<result name="login">/jump.jsp</result>
+    	</global-results>
+    	<!-- 返回首页Action -->
+		<action name="indexAction" class="cn.zzk.action.IndexAction">
+			<result>/WEB-INF/web/index.jsp</result>
+		</action>
+		<!-- 返回首页Action结束 -->
+		
+		<!-- 新闻详情Action -->
+		<action name="show_news" class="cn.zzk.action.IndexAction" method="show_news">
+			<result>/WEB-INF/web/news_detail.jsp</result>
+		</action>
+		<!-- 新闻详情Action结束 -->
+		
+		<!-- 注销Action -->
+		<action name="logoutAction" class="cn.zzk.action.LogoutAction">
+		<result>/logout.jsp</result>
+		</action>
+		<!-- 注销Action结束 -->
+		
+		<!-- 显示教师个人信息 -->
+		<action name="showInfoAction" class="cn.zzk.action.ShowTeacherInfoAction">
+   		<result >/WEB-INF/web/teacher_tinfo.jsp</result>
+   		</action>
+		<!-- 显示教师个人信息结束 -->
+		
+		<!-- 显示个人登录信息 -->
+		<action name="showLoginInfoAction" class="cn.zzk.action.ShowTeacherInfoAction" method="showLoginInfo">
+   		<result >/WEB-INF/web/teacher_logininfo.jsp</result>
+   		</action>
+		<!-- 显示个人登录信息结束 -->
+		
+		<!-- 显示个人奖惩信息 -->
+		<action name="showRPInfoAction" class="cn.zzk.action.ShowTeacherInfoAction" method="showMoney">
+   		<result >/WEB-INF/web/teacher_trp.jsp</result>
+   		</action>
+		<!-- 显示个人奖惩信息结束 -->
+		
+		<!-- 修改个人信息界面 -->
+		<action name="changeInfoAction" class="cn.zzk.action.ShowTeacherInfoAction" >
+   		<result >/WEB-INF/web/teacher_tinfo_change.jsp</result>
+   		</action>
+		<!-- 修改个人信息结束 -->
+		
+		<!-- 修改个人信息表单处理 -->
+		<action name="change_*" class="cn.zzk.action.ChangeInfoAction"  method="{1}">
+   		<result name="success">/WEB-INF/jump/change_success.jsp</result>
+   		<result name="error">/WEB-INF/jump/change_error.jsp</result>
+   		</action>
+		<!-- 修改个人信息表单处理结束 -->
+		
+    </package>
+    
+    <package name="administrator" namespace="/admin" extends="json-default">
+    	<!-- 拦截器 -->
+    	<interceptors>
+    	<interceptor name="userLogin" class="cn.zzk.interceptor.UserLoginCheck"></interceptor>
+    	<interceptor name="isAdmin" class="cn.zzk.interceptor.UserAdminCheck"></interceptor>
+    	<interceptor-stack name="loginStack">  
+        	<interceptor-ref name="userLogin"></interceptor-ref>  
+        	<interceptor-ref name="isAdmin"></interceptor-ref>
+        	<interceptor-ref name="defaultStack"></interceptor-ref>  
+        </interceptor-stack> 
+    	</interceptors>
+    	<default-interceptor-ref name="loginStack" /><!--后台默认拦截器栈  -->
+    	<!-- 全局login视图 -->
+    	<global-results>
+    		<result name="error">/WEB-INF/jump/nopower.jsp</result>
+    	</global-results>
+    	<!-- 展示发布新闻视图 -->
+    	<action name="pushNewsAction">
+    		<result>/WEB-INF/web/add_news.jsp</result>
+    	</action>
+    	<!-- 展示教师的奖惩视图 -->
+    	<action name="changRPAction" class="cn.zzk.action.NewsAction" method="showRP">
+    		<result>/WEB-INF/web/change_rp.jsp</result>
+    	</action>
+    	<!-- 添加公告逻辑 -->
+    	<action name="add_newsAction" class="cn.zzk.action.NewsAction">
+    		<result name="success">/WEB-INF/jump/addnews_success.jsp</result>
+    	</action>
+    	<!-- 展示所有教师奖惩信息的视图 -->
+    	<action name="ShowRPAction" class="cn.zzk.action.ChangeRPAction">
+    		<result>/WEB-INF/web/add_rp.jsp</result>
+    	</action>
+    	<!-- 添加奖惩信息逻辑 -->
+    	<action name="addRPAction" class="cn.zzk.action.ChangeRPAction" method="add_RP">
+    		<result>/WEB-INF/jump/add_rp.jsp</result>
+    	</action>
+    	<!-- ajax查找符合条件的教师 -->
+    	<action name="ajaxSearch" class="cn.zzk.action.SearchTeacherAction">
+    		<result name="success" type="json"></result>
+    	</action>
+    </package>
+   
+   
+
+   	
+</struts>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
